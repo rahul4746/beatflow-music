@@ -3,7 +3,7 @@
    Service Worker
    =============================== */
 
-const CACHE_NAME = "sastafy-v3";
+const CACHE_NAME = "sastafy-v4";
 
 const FILES_TO_CACHE = [
   "/",                // root
@@ -70,4 +70,5 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
 
