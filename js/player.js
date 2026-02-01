@@ -135,11 +135,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       div.className = "song";
 
       div.innerHTML = `
-        <span>${i + 1}</span>
-        <div>
+        <img class="song-cover" src="${song.cover || DEFAULT_COVER}" 
+            onerror="this.src='${DEFAULT_COVER}'" />
+
+        <div class="song-info">
           <h4>${song.title}</h4>
           <p>${song.artist}</p>
         </div>
+
         <button class="remove">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -162,7 +165,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       playlistEl.appendChild(div);
     });
+
+    highlightActiveSong();
   }
+
 
   function highlightActiveSong() {
     document.querySelectorAll(".song").forEach((el, i) => {
