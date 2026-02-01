@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const DEFAULT_COVER = "assets/images/default.png";
 
+  /* ===== SAFE DOM GETS ===== */
   const playBtn = document.getElementById("play");
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
@@ -22,112 +23,120 @@ document.addEventListener("DOMContentLoaded", async () => {
   const artistEl = document.getElementById("artist");
   const coverEl = document.getElementById("cover");
   const playlistEl = document.querySelector(".playlist");
-  const nowPlaying = document.querySelector(".now-playing");
   const emptyState = document.getElementById("emptyState");
 
   /* ================= EMPTY STATE ================= */
-  function updateEmptyState() {
-    emptyState.style.display = "block";
-    nowPlaying.style.display = "none";
-    titleEl.textContent = "No songs added";
-    artistEl.textContent = "Tap + to add songs";
-    coverEl.src = DEFAULT_COVER;
-    audio.src = "";
+  function updateEmptyState(hasSongs = false) {
+    if (!emptyState) return;
+
+    emptyState.style.display = hasSongs ? "none" : "block";
+
+    if (!hasSongs) {
+      if (titleEl) titleEl.textContent = "No songs added";
+      if (artistEl) artistEl.textContent = "Tap + to add songs";
+      if (coverEl) coverEl.src = DEFAULT_COVER;
+      audio.src = "";
+    }
   }
 
   /* ================= LOAD SONG ================= */
-  function loadSong(index) {
+  function loadSong(index, autoPlay = false) {
     const song = songs[index];
     if (!song) return;
 
-    emptyState.style.display = "none";
-    nowPlaying.style.display = "block";
+    currentIndex = index;
+    updateEmptyState(true);
 
     audio.src = song.src;
     audio.load();
 
-    titleEl.textContent = song.title;
-    artistEl.textContent = song.artist;
-
-    coverEl.src = song.cover || DEFAULT_COVER;
-    coverEl.onerror = () => {
-      coverEl.src = DEFAULT_COVER;
-    };
+    if (titleEl) titleEl.textContent = song.title || "Unknown";
+    if (artistEl) artistEl.textContent = song.artist || "";
+    if (coverEl) coverEl.src = song.cover || DEFAULT_COVER;
 
     highlightActiveSong();
+
+    if (autoPlay) {
+      audio.play().catch(() => {});
+    }
   }
 
   /* ================= PLAY / PAUSE ================= */
-  playBtn.onclick = () => {
+  playBtn?.addEventListener("click", () => {
     if (!audio.src) return;
-    audio.paused ? audio.play() : audio.pause();
-  };
+    audio.paused ? audio.play().catch(() => {}) : audio.pause();
+  });
 
-  audio.onplay = () => {
-    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    nowPlaying.classList.add("playing");
-  };
+  audio.addEventListener("play", () => {
+    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+  });
 
-  audio.onpause = () => {
-    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-    nowPlaying.classList.remove("playing");
-  };
+  audio.addEventListener("pause", () => {
+    if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+  });
 
   /* ================= NEXT / PREV ================= */
-  nextBtn.onclick = () => {
+  nextBtn?.addEventListener("click", () => {
     if (!songs.length) return;
 
     currentIndex = isShuffle
       ? Math.floor(Math.random() * songs.length)
       : (currentIndex + 1) % songs.length;
 
-    loadSong(currentIndex);
-    audio.play();
-  };
+    loadSong(currentIndex, true);
+  });
 
-  prevBtn.onclick = () => {
+  prevBtn?.addEventListener("click", () => {
     if (!songs.length) return;
 
     currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-    loadSong(currentIndex);
-    audio.play();
-  };
+    loadSong(currentIndex, true);
+  });
 
   /* ================= SHUFFLE ================= */
-  shuffleBtn.onclick = () => {
+  shuffleBtn?.addEventListener("click", () => {
     isShuffle = !isShuffle;
     shuffleBtn.classList.toggle("active", isShuffle);
-  };
+  });
 
   /* ================= REPEAT ================= */
-  repeatBtn.onclick = () => {
+  repeatBtn?.addEventListener("click", () => {
     repeatMode =
       repeatMode === "off" ? "all" :
       repeatMode === "all" ? "one" : "off";
 
     repeatBtn.classList.toggle("active", repeatMode !== "off");
-  };
 
-  audio.onended = () => {
+    if (repeatMode === "one") {
+      repeatBtn.dataset.mode = "one";
+    } else {
+      delete repeatBtn.dataset.mode;
+    }
+  });
+
+  audio.addEventListener("ended", () => {
     if (repeatMode === "one") {
       audio.currentTime = 0;
-      audio.play();
-    } else if (repeatMode === "all") {
-      nextBtn.click();
+      audio.play().catch(() => {});
+    } else {
+      nextBtn?.click();
     }
-  };
+  });
 
   /* ================= PROGRESS ================= */
-  audio.ontimeupdate = () => {
-    progress.value = (audio.currentTime / audio.duration) * 100 || 0;
-  };
+  audio.addEventListener("timeupdate", () => {
+    if (!progress || !audio.duration) return;
+    progress.value = (audio.currentTime / audio.duration) * 100;
+  });
 
-  progress.oninput = () => {
+  progress?.addEventListener("input", () => {
+    if (!audio.duration) return;
     audio.currentTime = (progress.value / 100) * audio.duration;
-  };
+  });
 
   /* ================= PLAYLIST ================= */
   function renderPlaylist() {
+    if (!playlistEl) return;
     playlistEl.innerHTML = "";
 
     songs.forEach((song, i) => {
@@ -135,8 +144,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       div.className = "song";
 
       div.innerHTML = `
-        <img class="song-cover" src="${song.cover || DEFAULT_COVER}" 
-            onerror="this.src='${DEFAULT_COVER}'" />
+        <span>${i + 1}</span>
+
+        <img
+          class="song-cover"
+          src="${song.cover || DEFAULT_COVER}"
+          onerror="this.src='${DEFAULT_COVER}'"
+          alt="cover"
+        />
 
         <div class="song-info">
           <h4>${song.title}</h4>
@@ -148,27 +163,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         </button>
       `;
 
-      div.onclick = () => {
-        currentIndex = i;
-        loadSong(i);
-        audio.play();
-      };
 
-      div.querySelector(".remove").onclick = async e => {
+      div.addEventListener("click", () => {
+        loadSong(i, true);
+      });
+
+      div.querySelector(".remove").addEventListener("click", async e => {
         e.stopPropagation();
         await deleteSongFromDB(song.dbId);
         songs.splice(i, 1);
 
-        songs.length ? loadSong(0) : updateEmptyState();
+        songs.length ? loadSong(0) : updateEmptyState(false);
         renderPlaylist();
-      };
+      });
 
       playlistEl.appendChild(div);
     });
-
-    highlightActiveSong();
   }
-
 
   function highlightActiveSong() {
     document.querySelectorAll(".song").forEach((el, i) => {
@@ -177,10 +188,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /* ================= ADD SONGS ================= */
-  addSongsBtn.onclick = () => fileInput.click();
+  addSongsBtn?.addEventListener("click", () => fileInput?.click());
 
-  fileInput.onchange = async e => {
-    const files = Array.from(e.target.files);
+  fileInput?.addEventListener("change", async e => {
+    const files = Array.from(e.target.files || []);
 
     for (const file of files) {
       if (!file.type.startsWith("audio/")) continue;
@@ -193,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     fileInput.value = "";
-  };
+  });
 
   /* ================= ADD TO UI ================= */
   function addSongToUI(dbSong) {
@@ -209,6 +220,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           cover: DEFAULT_COVER
         });
         renderPlaylist();
+        updateEmptyState(true);
       },
       onError: () => {
         songs.push({
@@ -219,10 +231,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           cover: DEFAULT_COVER
         });
         renderPlaylist();
+        updateEmptyState(true);
       }
     });
-
-    emptyState.style.display = "none";
   }
 
   /* ================= LOAD CACHE ================= */
@@ -230,7 +241,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const cachedSongs = await getAllSongsFromDB();
 
     if (!cachedSongs.length) {
-      updateEmptyState();
+      updateEmptyState(false);
       return;
     }
 
