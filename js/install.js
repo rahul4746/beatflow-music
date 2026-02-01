@@ -1,7 +1,7 @@
 let deferredPrompt;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const installBtn = document.getElementById("downloadBtn");
+  const installBtn = document.getElementById("installBtn");
 
   // Safety check
   if (!installBtn) return;
@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Listen for install availability
   window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();          // stop automatic mini-infobar
-    deferredPrompt = e;          // save the event
+    e.preventDefault();          // Stop automatic mini-infobar
+    deferredPrompt = e;          // Save the event
     installBtn.style.display = "inline-flex";
   });
 
