@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let isShuffle = false;
   let repeatMode = "off"; // off | all | one
 
+  const DEFAULT_COVER = "assets/images/default.png";
+
   const playBtn = document.getElementById("play");
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
@@ -29,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     nowPlaying.style.display = "none";
     titleEl.textContent = "No songs added";
     artistEl.textContent = "Tap + to add songs";
-    coverEl.src = "assets/images/default.png";
+    coverEl.src = DEFAULT_COVER;
     audio.src = "";
   }
 
@@ -46,7 +48,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     titleEl.textContent = song.title;
     artistEl.textContent = song.artist;
-    coverEl.src = song.cover;
+
+    coverEl.src = song.cover || DEFAULT_COVER;
+    coverEl.onerror = () => {
+      coverEl.src = DEFAULT_COVER;
+    };
 
     highlightActiveSong();
   }
@@ -93,22 +99,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     shuffleBtn.classList.toggle("active", isShuffle);
   };
 
-  /* ================= REPEAT (FINAL & CLEAN) ================= */
+  /* ================= REPEAT ================= */
   repeatBtn.onclick = () => {
     repeatMode =
       repeatMode === "off" ? "all" :
       repeatMode === "all" ? "one" : "off";
 
     repeatBtn.classList.toggle("active", repeatMode !== "off");
-
-    if (repeatMode === "one") {
-      repeatBtn.dataset.mode = "one";
-    } else {
-      delete repeatBtn.dataset.mode;
-    }
   };
 
-  /* ================= SONG END ================= */
   audio.onended = () => {
     if (repeatMode === "one") {
       audio.currentTime = 0;
@@ -116,7 +115,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else if (repeatMode === "all") {
       nextBtn.click();
     }
-    // off → stop
   };
 
   /* ================= PROGRESS ================= */
@@ -155,17 +153,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       div.querySelector(".remove").onclick = async e => {
         e.stopPropagation();
-
         await deleteSongFromDB(song.dbId);
         songs.splice(i, 1);
 
-        if (songs.length) {
-          currentIndex = 0;
-          loadSong(0);
-        } else {
-          updateEmptyState();
-        }
-
+        songs.length ? loadSong(0) : updateEmptyState();
         renderPlaylist();
       };
 
@@ -187,14 +178,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     for (const file of files) {
       if (!file.type.startsWith("audio/")) continue;
-
-      await dbReady;
       const saved = await saveSongToDB(file);
       addSongToUI(saved);
     }
 
     if (!audio.src && songs.length) {
-      currentIndex = 0;
       loadSong(0);
     }
 
@@ -212,7 +200,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           title: tag.tags.title || dbSong.name.replace(/\.[^/.]+$/, ""),
           artist: tag.tags.artist || "Local File",
           src: url,
-          cover: "assets/images/default.png"
+          cover: DEFAULT_COVER
         });
         renderPlaylist();
       },
@@ -222,7 +210,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           title: dbSong.name.replace(/\.[^/.]+$/, ""),
           artist: "Local File",
           src: url,
-          cover: "assets/images/default.jpg"
+          cover: DEFAULT_COVER
         });
         renderPlaylist();
       }
@@ -241,13 +229,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     cachedSongs.forEach(addSongToUI);
-    currentIndex = 0;
     loadSong(0);
   }
 
   /* ================= INIT ================= */
-  await dbReady;
   await loadSongsFromCache();
 });
-
-
