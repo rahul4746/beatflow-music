@@ -51,23 +51,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /* ================= LOAD SONG ================= */
-  function loadSong(index, autoPlay = false) {
+  function loadSong(index, autoPlay = false, reason = "manual") {
     const song = songs[index];
     if (!song) return;
 
     currentIndex = index;
     updateEmptyState(true);
-    audio.currentTime = 0;
     audio.src = song.src;
     audio.load();
 
     /* ===== restore timestamp if same song ===== */
+    // Resume ONLY when app reloads
+  if (reason === "resume") {
     const resume = JSON.parse(localStorage.getItem(RESUME_KEY));
     if (resume && resume.index === index) {
-      audio.onloadedmetadata = () => {
+      audio.addEventListener("loadedmetadata", () => {
         audio.currentTime = resume.time || 0;
-      };
+      }, { once: true });
+
     }
+  } else {
+    audio.currentTime = 0; // manual change → always start fresh
+  }
+
 
     if (titleEl) titleEl.textContent = song.title || "Unknown";
     if (artistEl) artistEl.textContent = song.artist || "";
@@ -89,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!audio.src && songs.length) {
       const resume = JSON.parse(localStorage.getItem(RESUME_KEY));
       const index = resume?.index ?? 0;
-      loadSong(index, true);
+      loadSong(index, true, "resume");
       return;
     }
 
@@ -123,15 +129,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       ? Math.floor(Math.random() * songs.length)
       : (currentIndex + 1) % songs.length;
 
-    loadSong(currentIndex, true);
+    loadSong(currentIndex, true, "manual");
   });
 
   prevBtn?.addEventListener("click", () => {
     if (!songs.length) return;
 
+    // Spotify behavior
+    if (audio.currentTime > 5) {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+      return;
+    }
+
     currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-    loadSong(currentIndex, true);
+    loadSong(currentIndex, true, "manual");
   });
+
 
   /* ================= SHUFFLE ================= */
   shuffleBtn?.addEventListener("click", () => {
@@ -292,7 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const resume = JSON.parse(localStorage.getItem(RESUME_KEY));
     const index = resume?.index ?? 0;
-    loadSong(index);
+    loadSong(index, false, "resume");
   }
 
   /* ================= INIT ================= */
