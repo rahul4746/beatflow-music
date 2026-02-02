@@ -24,23 +24,10 @@ Add your local MP3 files, manage a playlist, and enjoy music without ads or inte
 - Font Awesome
 - Service Worker (PWA)
 
-## 📁 Project Structure
-
-music_player/
-├── index.html
-├── style.css
-├── manifest.json
-├── sw.js
-├── js/
-│   └── player.js
-└── assets/
-    └── images/
-        └── default.jpg
-
 ## 🚀 Getting Started
 
 1. Clone the repo
-   git clone https://github.com/your-username/sastafy.git
+   git clone https://github.com/rahul4746/sastafy-music-player.git
 
 2. Open index.html in your browser  
    or host using GitHub Pages
@@ -64,3 +51,4 @@ MIT License
 
 - jsmediatags
 - Font Awesome
+
