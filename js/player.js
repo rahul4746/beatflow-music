@@ -1,6 +1,12 @@
 /*==== import control part ======*/
 import { initMediaControls, updateMediaInfo } from "./control.js";
 import { initTimeDisplay } from "./time.js";
+import {
+  addToQueue,
+  playNext as queuePlayNext,
+  getNextFromQueue
+} from "./queue.js";
+
 
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -89,6 +95,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  /* ================= QUEUE NEXT SONG ================= */
+
+  function playNextSong() {
+    const queuedIndex = getNextFromQueue();
+
+    // 1 Queue first
+    if (queuedIndex !== null) {
+      loadSong(queuedIndex, true, "manual");
+      return;
+    }
+
+    // 2 Shuffle
+    if (isShuffle && songs.length > 1) {
+      let next;
+      do {
+        next = Math.floor(Math.random() * songs.length);
+      } while (next === currentIndex);
+
+      currentIndex = next;
+      loadSong(currentIndex, true, "manual");
+      return;
+    }
+
+
+    // 3 Normal order
+    currentIndex = (currentIndex + 1) % songs.length;
+    loadSong(currentIndex, true, "manual");
+  }
+
+
   /* ================= PLAY / PAUSE ================= */
   playBtn?.addEventListener("click", () => {
 
@@ -124,12 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ================= NEXT / PREV ================= */
   nextBtn?.addEventListener("click", () => {
     if (!songs.length) return;
-
-    currentIndex = isShuffle
-      ? Math.floor(Math.random() * songs.length)
-      : (currentIndex + 1) % songs.length;
-
-    loadSong(currentIndex, true, "manual");
+    playNextSong();
   });
 
   prevBtn?.addEventListener("click", () => {
@@ -172,10 +203,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (repeatMode === "one") {
       audio.currentTime = 0;
       audio.play().catch(() => {});
-    } else {
-      nextBtn?.click();
+      return;
     }
+
+    playNextSong();
   });
+
 
   /* ================= PROGRESS ================= */
   audio.addEventListener("timeupdate", () => {
@@ -228,6 +261,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       div.addEventListener("click", () => loadSong(i, true));
 
+      div.addEventListener("contextmenu", e => {
+        e.preventDefault();
+
+        const choice = confirm("OK = Play Next\nCancel = Add to Queue");
+
+        if (choice) {
+          queuePlayNext(i); // Play Next
+        } else {
+          addToQueue(i);    // Add to Queue
+        }
+      });
+
       div.querySelector(".remove").addEventListener("click", async e => {
         e.stopPropagation();
         await deleteSongFromDB(song.dbId);
@@ -238,6 +283,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       playlistEl.appendChild(div);
     });
+
   }
 
   function highlightActiveSong() {
@@ -323,4 +369,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 });
-
