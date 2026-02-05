@@ -32,13 +32,30 @@
       </div>
 
       <button id="installBtn" class="fab">
-       <i class="fa-solid fa-down-long"></i>
+        <i class="fa-solid fa-down-long"></i>
       </button>
-      
+
       <button id="addSongs" class="add-btn">
         <i class="fa-solid fa-plus"></i>
       </button>
     </header>
+
+    <!-- QUEUE PANEL -->
+    <div id="queuePanel" class="queue-panel hidden">
+      <div class="queue-header">
+        <div>
+          <h3>Next in queue</h3>
+        </div>
+        <button id="clearQueue">Clear</button>
+      </div>
+
+      <div id="queueList" class="queue-list">
+        <!-- queued songs will render here -->
+      </div>
+    </div>
+
+    <!-- QUEUE BACKDROP -->
+    <div id="queueBackdrop" class="queue-backdrop hidden"></div>
 
     <!-- EMPTY STATE -->
     <div id="emptyState">
@@ -54,6 +71,18 @@
   <!-- PLAYER BAR -->
   <div class="player-bar">
 
+    <!-- MINI NOW PLAYING -->
+    <div class="mini-now-playing">
+      <div class="mini-info marquee">
+        <span id="miniTitle">No song playing</span>
+      </div>
+
+      <!-- FIX: removed disabled so JS click works -->
+      <button id="queueBtn" class="queue-btn">
+        <i class="fa-solid fa-list"></i>
+      </button>
+    </div>
+
     <input
       type="file"
       id="fileInput"
@@ -62,14 +91,14 @@
       hidden
     />
 
-    <!-- PROGRESS BAR -->  
+    <!-- PROGRESS BAR -->
     <input type="range" id="progress" value="0">
+
     <!-- TIME DISPLAY -->
-     <div class="time-row">
+    <div class="time-row">
       <span id="currentTime">00:00</span>
       <span id="duration">00:00</span>
     </div>
-
 
     <div class="controls">
       <button id="shuffle"><i class="fa-solid fa-shuffle"></i></button>
@@ -82,6 +111,7 @@
 
   <script src="js/storage.js"></script>
   <script type="module" src="js/player.js"></script>
+  <script type="module" src="js/queue-ui.js"></script>
   <script src="js/install.js"></script>
 
   <script>
