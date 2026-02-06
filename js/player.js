@@ -93,11 +93,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       miniTitle.textContent = `${song.title} – ${song.artist || "Unknown"}`;
         requestAnimationFrame(() => {
           const parent = miniTitle.parentElement;
-          parent.classList.toggle(
-            "scroll",
+          miniTitle.classList.toggle(
+            "scroll-text",
             miniTitle.scrollWidth > parent.clientWidth
           );
         });
+
 
     }
 
@@ -327,6 +328,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       playlistEl.appendChild(div);
+      const titleEl = div.querySelector(".song-info h4");
+      requestAnimationFrame(() => {
+        if (titleEl.scrollWidth > titleEl.clientWidth) {
+          titleEl.classList.add("scroll-text");
+        }
+      });
+
     });
   }
 
@@ -340,10 +348,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function highlightActiveSong() {
     document.querySelectorAll(".song").forEach((el, i) => {
-      el.classList.toggle("active", i === currentIndex);
+      const isActive = i === currentIndex;
+
+      el.classList.toggle("active", isActive);
       el.classList.remove("playing");
+
+      if (isActive) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest"
+        });
+      }
     });
   }
+
 
   /* ================= ADD SONGS ================= */
   addSongsBtn?.addEventListener("click", () => fileInput?.click());
