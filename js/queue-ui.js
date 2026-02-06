@@ -6,6 +6,7 @@ const queueBackdrop = document.getElementById("queueBackdrop");
 const queueList = document.getElementById("queueList");
 const clearQueueBtn = document.getElementById("clearQueue");
 const queueBtn = document.getElementById("queueBtn");
+const queueBtnNowPlaying = document.getElementById("queueBtnNowPlaying");
 
 
 /* ===== OPEN / CLOSE ===== */
@@ -34,6 +35,11 @@ function closeQueue() {
 
 /* ===== EVENTS ===== */
 queueBtn?.addEventListener("click", e => {
+  e.stopPropagation();
+  openQueue();
+});
+
+queueBtnNowPlaying?.addEventListener("click", e => {
   e.stopPropagation();
   openQueue();
 });
