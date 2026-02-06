@@ -3,7 +3,7 @@
    Service Worker
    =============================== */
 
-const CACHE_NAME = "sastafy-v3"; // ⬅️ bump version to force update
+const CACHE_NAME = "sastafy-v2.3"; // ⬅️ bump version to force update
 
 const FILES_TO_CACHE = [
   "/",                       // root
@@ -15,13 +15,13 @@ const FILES_TO_CACHE = [
   "/js/storage.js",
 
   // CSS
-  "/js/style.css",
+  "/style.css",
 
   // Images (IMPORTANT)
   "/assets/images/default.png",
 
   // Icons (PWA)
-  "/assets/icons/app.png"
+  "/icons/app.png"
 ];
 
 /* ---------- INSTALL ---------- */
@@ -83,6 +83,7 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
 
 
 
