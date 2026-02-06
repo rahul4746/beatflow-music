@@ -101,6 +101,7 @@ body {
 /* ===== PLAYLIST ===== */
 .playlist {
   padding: 10px 20px;
+  padding-bottom: 110px; /* height of mini player + breathing room */
 }
 
 .song {
@@ -225,6 +226,10 @@ body {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .song-info p {
@@ -276,6 +281,30 @@ body {
   100% { height: 30%; }
 }
 
+.scroll-text {
+  display: inline-block;
+  animation: scrollBack 8s linear infinite;
+}
+
+@keyframes scrollBack {
+  0% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(calc(-100% + 100vw));
+  }
+  60% {
+    transform: translateX(calc(-100% + 100vw));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
 /* ===== MINI NOW PLAYING ===== */
 .mini-now-playing {
   display: flex;
@@ -300,6 +329,17 @@ body {
   display: block;
   max-width: 100%;
 }
+/*added*/
+.mini-title {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.mini-title span {
+  display: inline-block;
+  padding-right: 40px;
+}
+
 
 .queue-btn {
   background: none;
