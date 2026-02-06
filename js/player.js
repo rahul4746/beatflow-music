@@ -171,12 +171,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   /* ===== NOW PLAYING ANIMATION STATE ===== */
+  function updateActiveTitleScroll() {
+    const activeSong = document.querySelector(".song.active");
+    if (!activeSong) return;
+    const titleEl = activeSong.querySelector(".song-info h4");
+    if (!titleEl) return;
+    titleEl.classList.remove("scroll-text");
+    if (activeSong.classList.contains("playing")) {
+      if (titleEl.scrollWidth > titleEl.clientWidth) {
+        titleEl.classList.add("scroll-text");
+      }
+    }
+  }
+
   audio.addEventListener("play", () => {
     document.querySelector(".song.active")?.classList.add("playing");
+    requestAnimationFrame(updateActiveTitleScroll);
   });
 
   audio.addEventListener("pause", () => {
     document.querySelector(".song.active")?.classList.remove("playing");
+    updateActiveTitleScroll();
   });
 
   /* ================= NEXT / PREV ================= */
@@ -327,13 +342,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         renderPlaylist();
       });
 
-      playlistEl.appendChild(div);
-      const titleEl = div.querySelector(".song-info h4");
-      requestAnimationFrame(() => {
-        if (titleEl.scrollWidth > titleEl.clientWidth) {
-          titleEl.classList.add("scroll-text");
-        }
-      });
+       playlistEl.appendChild(div);
 
     });
   }
@@ -352,6 +361,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       el.classList.toggle("active", isActive);
       el.classList.remove("playing");
+      const titleEl = el.querySelector(".song-info h4");
+      if (titleEl) titleEl.classList.remove("scroll-text");
 
       if (isActive) {
         el.scrollIntoView({
@@ -360,6 +371,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
     });
+    requestAnimationFrame(updateActiveTitleScroll);
   }
 
 
