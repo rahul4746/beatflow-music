@@ -329,6 +329,10 @@ body {
   max-width: 100%;
 }
 #miniTitle.scroll-text {
+  display: inline-block;
+  width: max-content;
+  max-width: none;
+  padding-right: 16px;
   animation: mini-marquee 8s linear infinite;
 }
 
@@ -562,4 +566,5 @@ button {
   font-size: 12px;
   opacity: 0.6;
 }
+
 
