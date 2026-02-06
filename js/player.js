@@ -95,6 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const coverEl = document.getElementById("cover");
   const playlistEl = document.querySelector(".playlist");
   const emptyState = document.getElementById("emptyState");
+  const playerBar = document.querySelector(".player-bar");
 
   /* ================= EMPTY STATE ================= */
   function updateEmptyState(hasSongs = false) {
@@ -109,7 +110,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       audio.src = "";
       if (miniTitle) miniTitle.textContent = "No song playing";
     }
-  }
+   }
+
+  function updatePlayerBarHeight() {
+  if (!playerBar) return;
+  const height = playerBar.offsetHeight;
+  document.documentElement.style.setProperty("--player-bar-height", `${height}px`);
+}
+
+updatePlayerBarHeight();
+window.addEventListener("resize", updatePlayerBarHeight);
 
   /* ================= LOAD SONG ================= */
   function loadSong(index, autoPlay = false, reason = "manual") {
@@ -249,11 +259,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   audio.addEventListener("play", () => {
     document.querySelector(".song.active")?.classList.add("playing");
+    document.querySelector(".playlist-song.active")?.classList.add("playing");
     requestAnimationFrame(updateActiveTitleScroll);
   });
 
   audio.addEventListener("pause", () => {
     document.querySelector(".song.active")?.classList.remove("playing");
+    document.querySelector(".playlist-song.active")?.classList.remove("playing");
     updateActiveTitleScroll();
   });
 
@@ -380,21 +392,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       menuBtn.addEventListener("click", e => {
         e.stopPropagation();
         document.querySelectorAll(".song-menu").forEach(m => {
-          if (m !== menu) m.style.display = "none";
+          if (m !== menu) m.classList.remove("menu-open");
         });
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
+        menu.classList.toggle("menu-open");
       });
 
       menu.querySelector(".play-next").addEventListener("click", e => {
         e.stopPropagation();
         queuePlayNext(i);
-        menu.style.display = "none";
+        menu.classList.remove("menu-open");
       });
 
       menu.querySelector(".add-queue").addEventListener("click", e => {
         e.stopPropagation();
         addToQueue(i);
-        menu.style.display = "none";
+        menu.classList.remove("menu-open");
       });
 
       menu.querySelector(".remove-song").addEventListener("click", async e => {
@@ -413,7 +425,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.addEventListener("click", () => {
     document.querySelectorAll(".song-menu").forEach(m => {
-      m.style.display = "none";
+      m.classList.remove("menu-open");
     });
   });
 
@@ -427,6 +439,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       const titleEl = el.querySelector(".song-info h4");
       if (titleEl) titleEl.classList.remove("scroll-text");
 
+       if (isActive) {
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest"
+        });
+      }
+    });
+    const activeSongId = songs[currentIndex]?.dbId;
+    document.querySelectorAll(".playlist-song").forEach(el => {
+      const isActive = String(el.dataset.songId) === String(activeSongId);
+      el.classList.toggle("active", isActive);
+      el.classList.remove("playing");
       if (isActive) {
         el.scrollIntoView({
           behavior: "smooth",
@@ -434,6 +458,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
     });
+    if (!audio.paused) {
+      document.querySelector(".playlist-song.active")?.classList.add("playing");
+    }
     requestAnimationFrame(updateActiveTitleScroll);
   }
 
@@ -535,6 +562,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ===== EXPOSE FOR QUEUE UI ===== */
   window.songs = songs;
   window.loadSong = loadSong;
+  window.getCurrentSongId = () => songs[currentIndex]?.dbId;
+  window.isSongPlaying = () => !audio.paused;
 
 
 });
