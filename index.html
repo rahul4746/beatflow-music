@@ -85,9 +85,12 @@
       <h2 id="playlistViewTitle">Playlist</h2>
       <span id="playlistViewCount">0 songs</span>
     </div>
-    <div class="playlist-view-actions">
+     <div class="playlist-view-actions">
       <button id="playlistAddDevice" class="icon-btn" aria-label="Add songs from device">
         <i class="fa-solid fa-file-arrow-up"></i>
+      </button>
+      <button id="playlistDelete" class="icon-btn" aria-label="Delete playlist">
+        <i class="fa-solid fa-trash"></i>
       </button>
       <button id="playlistAddSongs" class="icon-btn" aria-label="Add songs to playlist">
         <i class="fa-solid fa-plus"></i>
@@ -106,27 +109,68 @@
       </div>
       <div id="playlistAddList" class="playlist-add-list"></div>
       <div class="playlist-add-actions">
-        <button id="playlistAddCancel" class="ghost-btn">Cancel</button>
-        <button id="playlistAddConfirm" class="primary-btn">Add Selected</button>
+        <button id="playlistAddCancel" class="ghost-btn">
+          <i class="fa-solid fa-xmark"></i>
+          Cancel
+        </button>
+        <button id="playlistAddConfirm" class="primary-btn">
+          <i class="fa-solid fa-plus"></i>
+          Add Selected
+        </button>
       </div>
     </div>
   </div>
+
 </section>
 
 <!-- PLAYLIST -->
 <section class="playlist"></section>
   </div>
 
+  <div id="playlistCreatePanel" class="playlist-add-panel hidden" aria-hidden="true">
+    <div class="playlist-add-content playlist-create-content" role="dialog" aria-modal="true" aria-label="Create playlist">
+      <div class="playlist-add-header">
+        <h3>Create playlist</h3>
+        <button id="playlistCreateClose" class="icon-btn" aria-label="Close create playlist">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="playlist-create-body">
+        <label class="playlist-create-label" for="playlistCreateName">Playlist name</label>
+        <div class="playlist-create-field">
+          <i class="fa-solid fa-list-music"></i>
+          <input id="playlistCreateName" type="text" placeholder="My favorites" maxlength="60" />
+        </div>
+        <p class="playlist-create-hint">Tip: Keep it short and memorable.</p>
+      </div>
+      <div class="playlist-add-actions">
+        <button id="playlistCreateCancel" class="ghost-btn">
+          <i class="fa-solid fa-xmark"></i>
+          Cancel
+        </button>
+        <button id="playlistCreateConfirm" class="primary-btn">
+          <i class="fa-solid fa-check"></i>
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- NOW PLAYING MODAL -->
   <div id="nowPlayingModal" class="now-playing-modal hidden" aria-hidden="true">
-    <div class="now-playing-backdrop" data-close></div>
-    <div class="now-playing-sheet" role="dialog" aria-modal="true" aria-label="Now playing">
-      <div class="now-playing-header">
-        <span>Now Playing</span>
+  <div class="now-playing-backdrop" data-close></div>
+  <div class="now-playing-sheet" role="dialog" aria-modal="true" aria-label="Now playing">
+    <div class="now-playing-header">
+      <span>Now Playing</span>
+      <div class="now-playing-header-actions">
+        <button id="queueBtnNowPlaying" class="queue-btn queue-btn--active" type="button" aria-label="Open queue">
+          <i class="fa-solid fa-list"></i>
+        </button>
         <button class="now-playing-close" type="button" aria-label="Close">
           <i class="fa-solid fa-chevron-down"></i>
         </button>
       </div>
+    </div>
 
       <div class="now-playing-cover">
         <img id="cover" src="assets/images/default.png" alt="Album art">
