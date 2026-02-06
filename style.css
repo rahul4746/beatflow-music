@@ -101,7 +101,7 @@ body {
 /* ===== PLAYLIST ===== */
 .playlist {
   padding: 10px 20px;
-  padding-bottom: 110px; /* height of mini player + breathing room */
+  padding-bottom: 140px; /* height of mini player + breathing room */
 }
 
 .song {
@@ -167,6 +167,7 @@ body {
   color: white;
   font-size: 24px;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .controls button.active {
@@ -281,30 +282,6 @@ body {
   100% { height: 30%; }
 }
 
-.scroll-text {
-  display: inline-block;
-  animation: scrollBack 8s linear infinite;
-}
-
-@keyframes scrollBack {
-  0% {
-    transform: translateX(0);
-  }
-  10% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(calc(-100% + 100vw));
-  }
-  60% {
-    transform: translateX(calc(-100% + 100vw));
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-
 /* ===== MINI NOW PLAYING ===== */
 .mini-now-playing {
   display: flex;
@@ -325,22 +302,19 @@ body {
 #miniTitle {
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: unset;
   display: block;
   max-width: 100%;
 }
-/*added*/
-.mini-title {
-  overflow: hidden;
-  white-space: nowrap;
+#miniTitle.scroll-text {
+  animation: mini-marquee 8s linear infinite;
 }
 
-.mini-title span {
-  display: inline-block;
-  padding-right: 40px;
+@keyframes mini-marquee {
+  0% { transform: translateX(0); }
+  15% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
 }
-
-
 .queue-btn {
   background: none;
   border: none;
@@ -360,48 +334,6 @@ body {
 }
 
 /* ===== ROLLING TEXT ===== */
-
-/* ===== SMART MARQUEE (Spotify-style) ===== */
-
-.marquee {
-  position: relative;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 100%;
-}
-
-/* Inner text */
-.marquee span {
-  display: inline-block;
-  padding-right: 48px; /* gap before restart */
-}
-
-/* Only animate when overflowing */
-.song.active .marquee.scroll span,
-.player-bar .marquee.scroll span {
-  animation: marquee-scroll 8s linear infinite;
-  animation-delay: 1s;
-}
-
-/* KEYFRAMES: scroll out → re-enter */
-@keyframes marquee-scroll {
-  0% {
-    transform: translateX(0);
-  }
-
-  40% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(calc(-100% - 48px));
-  }
-}
-
-/* STOP animation if text fits */
-.marquee span:has(:not(:only-child)) {
-  animation: none;
-}
 
 /* Mini player sizing */
 .mini-info {
@@ -450,7 +382,9 @@ body {
   z-index: 10;
   pointer-events: auto;
 }
-
+button {
+  -webkit-tap-highlight-color: transparent;
+}
 .song-menu button {
   display: block;
   width: 100%;
@@ -468,6 +402,14 @@ body {
 .song-menu button {
   position: relative;
   overflow: hidden;
+}
+.song-menu button:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.song-menu button:active {
+  background: rgba(255,255,255,0.15);
+  transform: scale(0.97);
 }
 
 .song-menu button::before {
