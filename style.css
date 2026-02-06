@@ -225,6 +225,7 @@ body {
   flex-direction: column;
   flex: 1;
   min-width: 0; /* 🔑 allows text to shrink properly within flex */
+  overflow: hidden;
 }
 
 .song-info h4 {
@@ -244,13 +245,16 @@ body {
 
 .song-info h4.scroll-text {
   display: inline-block;
+  width: max-content;
+  padding-right: 16px;
+  text-overflow: unset;
   animation: song-marquee 8s linear infinite;
 }
 
 @keyframes song-marquee {
   0% { transform: translateX(0); }
   15% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  100% { transform: translateX(calc(-100% - 16px)); }
 }
 
 
