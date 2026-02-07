@@ -367,7 +367,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
           <p>${song.artist}</p>
         </div>
 
-        <button class="menu-btn">
+        <button class="menu-btn" type="button" aria-label="Song options">
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
 
@@ -381,7 +381,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
       // click to play
       div.addEventListener("click", e => {
         if (e.target.closest(".menu-btn") || e.target.closest(".song-menu")) return;
-        loadSong(i, true);
+        loadSong(i, true, "manual");
       });
 
 
@@ -390,6 +390,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
       const menu = div.querySelector(".song-menu");
 
       menuBtn.addEventListener("click", e => {
+        e.preventDefault();
         e.stopPropagation();
         document.querySelectorAll(".song-menu").forEach(m => {
           if (m !== menu) m.classList.remove("menu-open");
@@ -398,18 +399,21 @@ window.addEventListener("resize", updatePlayerBarHeight);
       });
 
       menu.querySelector(".play-next").addEventListener("click", e => {
+        e.preventDefault();
         e.stopPropagation();
         queuePlayNext(i);
         menu.classList.remove("menu-open");
       });
 
       menu.querySelector(".add-queue").addEventListener("click", e => {
+        e.preventDefault();
         e.stopPropagation();
         addToQueue(i);
         menu.classList.remove("menu-open");
       });
 
       menu.querySelector(".remove-song").addEventListener("click", async e => {
+        e.preventDefault();
         e.stopPropagation();
         await deleteSongFromDB(song.dbId);
         songs.splice(i, 1);
@@ -458,7 +462,8 @@ window.addEventListener("resize", updatePlayerBarHeight);
         });
       }
     });
-    if (!audio.paused) {
+     if (!audio.paused) {
+      document.querySelector(".song.active")?.classList.add("playing");
       document.querySelector(".playlist-song.active")?.classList.add("playing");
     }
     requestAnimationFrame(updateActiveTitleScroll);
