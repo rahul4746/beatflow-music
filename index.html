@@ -114,8 +114,8 @@
           Cancel
         </button>
         <button id="playlistAddConfirm" class="primary-btn">
-          <i class="fa-solid fa-plus"></i>
-          Add Selected
+          <i class="fa-solid fa-check"></i>
+          Done
         </button>
       </div>
     </div>
@@ -151,6 +151,36 @@
         <button id="playlistCreateConfirm" class="primary-btn">
           <i class="fa-solid fa-check"></i>
           Create
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="playlistDeletePanel" class="playlist-delete-panel hidden" aria-hidden="true">
+    <div class="playlist-delete-backdrop" data-close></div>
+    <div class="playlist-delete-content" role="dialog" aria-modal="true" aria-labelledby="playlistDeleteTitle" aria-describedby="playlistDeleteDesc">
+      <div class="playlist-delete-header">
+        <span class="playlist-delete-icon">
+          <i class="fa-solid fa-trash-can"></i>
+        </span>
+        <button id="playlistDeleteClose" class="icon-btn" aria-label="Close delete playlist">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="playlist-delete-body">
+        <h3 id="playlistDeleteTitle">Delete playlist?</h3>
+        <p id="playlistDeleteDesc">
+          You're about to remove <span id="playlistDeleteName">this playlist</span> forever. This can’t be undone.
+        </p>
+      </div>
+      <div class="playlist-delete-actions">
+        <button id="playlistDeleteCancel" class="ghost-btn">
+          <i class="fa-solid fa-xmark"></i>
+          Keep
+        </button>
+        <button id="playlistDeleteConfirm" class="danger-btn">
+          <i class="fa-solid fa-trash"></i>
+          Delete
         </button>
       </div>
     </div>
