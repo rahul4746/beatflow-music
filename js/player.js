@@ -6,6 +6,7 @@ import {
   playNext as queuePlayNext,
   getNextFromQueue
 } from "./queue.js";
+import { openSongPlaylistPanel } from "./playlist-song-panel.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -367,9 +368,14 @@ window.addEventListener("resize", updatePlayerBarHeight);
           <p>${song.artist}</p>
         </div>
 
-        <button class="menu-btn" type="button" aria-label="Song options">
-          <i class="fa-solid fa-ellipsis-vertical"></i>
-        </button>
+        <div class="song-actions">
+          <button class="add-to-playlist-btn" type="button" aria-label="Add to playlists">
+            <i class="fa-regular fa-square-plus"></i>
+          </button>
+          <button class="menu-btn" type="button" aria-label="Song options">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+        </div>
 
         <div class="song-menu">
           <button class="play-next"><i class="fa-solid fa-forward-step"></i> Play Next</button>
@@ -385,7 +391,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
       let touchMoved = false;
 
       div.addEventListener("touchstart", e => {
-        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu")) return;
+        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu") || e.target.closest(".add-to-playlist-btn")) return;
         if (!e.touches || e.touches.length !== 1) return;
         touchMoved = false;
         touchStartX = e.touches[0].clientX;
@@ -402,7 +408,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
       }, { passive: true });
 
       div.addEventListener("touchend", e => {
-        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu")) return;
+        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu") || e.target.closest(".add-to-playlist-btn")) return;
         if (touchMoved) {
           touchMoved = false;
           return;
@@ -419,7 +425,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
 
       // click to play
       div.addEventListener("click", e => {
-        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu")) return;
+        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu") || e.target.closest(".add-to-playlist-btn")) return;
         if (ignoreClick) {
           ignoreClick = false;
           return;
@@ -429,8 +435,15 @@ window.addEventListener("resize", updatePlayerBarHeight);
 
 
       // menu logic
+      const addToPlaylistBtn = div.querySelector(".add-to-playlist-btn");
       const menuBtn = div.querySelector(".menu-btn");
       const menu = div.querySelector(".song-menu");
+
+      addToPlaylistBtn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        openSongPlaylistPanel(song.dbId, song.title);
+      });
 
       menuBtn.addEventListener("click", e => {
         e.preventDefault();
@@ -477,7 +490,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
 
 
   document.addEventListener("click", event => {
-    if (event.target.closest(".menu-btn") || event.target.closest(".song-menu")) {
+    if (event.target.closest(".menu-btn") || event.target.closest(".song-menu") || event.target.closest(".add-to-playlist-btn")) {
       return;
     }
     document.querySelectorAll(".song-menu").forEach(m => {
