@@ -380,13 +380,42 @@ window.addEventListener("resize", updatePlayerBarHeight);
 
       // click to play
       let ignoreClick = false;
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchMoved = false;
+
+      div.addEventListener("touchstart", e => {
+        if (e.target.closest(".menu-btn") || e.target.closest(".song-menu")) return;
+        if (!e.touches || e.touches.length !== 1) return;
+        touchMoved = false;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      div.addEventListener("touchmove", e => {
+        if (touchMoved || !e.touches || e.touches.length !== 1) return;
+        const deltaX = Math.abs(e.touches[0].clientX - touchStartX);
+        const deltaY = Math.abs(e.touches[0].clientY - touchStartY);
+        if (deltaX > 8 || deltaY > 8) {
+          touchMoved = true;
+        }
+      }, { passive: true });
 
       div.addEventListener("touchend", e => {
         if (e.target.closest(".menu-btn") || e.target.closest(".song-menu")) return;
+        if (touchMoved) {
+          touchMoved = false;
+          return;
+        }
         e.preventDefault();
         ignoreClick = true;
         loadSong(i, true, "manual");
       });
+
+      div.addEventListener("touchcancel", () => {
+        touchMoved = false;
+      });
+
 
       // click to play
       div.addEventListener("click", e => {
