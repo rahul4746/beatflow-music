@@ -6,6 +6,7 @@ import {
   deletePlaylist
 } from "./playlist-storage.js";
 import { addToQueue, playNext as queuePlayNext } from "./queue.js";
+import { openSongPlaylistPanel } from "./playlist-song-panel.js";
 
 const playlistsHome = document.getElementById("playlistsHome");
 const playlistList = document.getElementById("playlistList");
@@ -175,9 +176,14 @@ function renderPlaylistView() {
         <h4>${song?.title || "Unavailable song"}</h4>
         <p>${song?.artist || "Song not found"}</p>
       </div>
-      <button class="playlist-menu-btn" aria-label="Playlist options">
-        <i class="fa-solid fa-ellipsis-vertical"></i>
-      </button>
+      <div class="playlist-song-actions">
+        <button class="playlist-add-btn" aria-label="Add to playlists">
+          <i class="fa-regular fa-square-plus"></i>
+        </button>
+        <button class="playlist-menu-btn" aria-label="Playlist options">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
       <div class="playlist-menu">
         <button class="playlist-play-next">
           <i class="fa-solid fa-forward-step"></i>
@@ -195,7 +201,7 @@ function renderPlaylistView() {
     `;
 
     row.addEventListener("click", event => {
-      if (event.target.closest(".playlist-menu-btn") || event.target.closest(".playlist-menu")) return;
+      if (event.target.closest(".playlist-menu-btn") || event.target.closest(".playlist-menu") || event.target.closest(".playlist-add-btn")) return;
       const songIndex = getSongIndexById(songId);
       if (songIndex < 0) return;
       if (typeof window.loadSong === "function") {
@@ -203,8 +209,14 @@ function renderPlaylistView() {
       }
     });
 
+    const addBtn = row.querySelector(".playlist-add-btn");
     const menuBtn = row.querySelector(".playlist-menu-btn");
     const menu = row.querySelector(".playlist-menu");
+    addBtn.addEventListener("click", event => {
+      event.stopPropagation();
+      openSongPlaylistPanel(songId, song?.title);
+    });
+
      menuBtn.addEventListener("click", event => {
       event.stopPropagation();
       document.querySelectorAll(".playlist-menu").forEach(item => {
@@ -482,6 +494,11 @@ document.addEventListener("keydown", event => {
       closePlaylistView();
     }
   }
+});
+
+document.addEventListener("playlists-updated", () => {
+  renderPlaylistsHome();
+  renderPlaylistView();
 });
 
 renderPlaylistsHome();
