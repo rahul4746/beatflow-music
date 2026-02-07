@@ -1314,13 +1314,15 @@ body {
   top: 50%;
   transform: translateY(-50%);
   background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0,0,0,.4);
   overflow: hidden;
   opacity: 0;
   transform: translateY(-50%) translateY(-6px) scale(0.98);
   pointer-events: none;
-  z-index: 120;
+  visibility: hidden;
+  z-index: 200;
   transition: opacity 0.18s ease, transform 0.18s ease;
   min-width: 180px;
 }
@@ -1329,6 +1331,7 @@ body {
   opacity: 1;
   transform: translateY(-50%) translateY(0) scale(1);
   pointer-events: auto;
+  visibility: visible;
 }
 button {
   -webkit-tap-highlight-color: transparent;
