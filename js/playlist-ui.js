@@ -32,7 +32,14 @@ const playlistAddList = document.getElementById("playlistAddList");
 const playlistAddClose = document.getElementById("playlistAddClose");
 const playlistAddCancel = document.getElementById("playlistAddCancel");
 const playlistAddConfirm = document.getElementById("playlistAddConfirm");
+const playlistDeletePanel = document.getElementById("playlistDeletePanel");
+const playlistDeleteClose = document.getElementById("playlistDeleteClose");
+const playlistDeleteCancel = document.getElementById("playlistDeleteCancel");
+const playlistDeleteConfirm = document.getElementById("playlistDeleteConfirm");
+const playlistDeleteName = document.getElementById("playlistDeleteName");
+const playlistDeleteBackdrop = playlistDeletePanel?.querySelector("[data-close]");
 const fileInput = document.getElementById("fileInput");
+
 
 let activePlaylistId = null;
 let pendingPlaylistAdd = null;
@@ -46,6 +53,10 @@ if (playlistView?.classList.contains("hidden")) {
 
 if (playlistAddPanel?.classList.contains("hidden")) {
   playlistAddPanel.setAttribute("inert", "");
+}
+
+if (playlistDeletePanel?.classList.contains("hidden")) {
+  playlistDeletePanel.setAttribute("inert", "");
 }
 
 function getGlobalSongs() {
@@ -267,6 +278,25 @@ function closeAddPanel() {
   }
 }
 
+function openDeletePanel() {
+  if (!playlistDeletePanel) return;
+  const playlist = loadPlaylists().find(item => item.id === activePlaylistId);
+  const name = playlist?.name || "this playlist";
+  if (playlistDeleteName) playlistDeleteName.textContent = `"${name}"`;
+  playlistDeletePanel.classList.remove("hidden");
+  playlistDeletePanel.setAttribute("aria-hidden", "false");
+  playlistDeletePanel.removeAttribute("inert");
+  playlistDeleteCancel?.focus();
+}
+
+function closeDeletePanel() {
+  if (!playlistDeletePanel) return;
+  playlistDeletePanel.classList.add("hidden");
+  playlistDeletePanel.setAttribute("aria-hidden", "true");
+  playlistDeletePanel.setAttribute("inert", "");
+  playlistDeleteBtn?.focus();
+}
+
 function openCreatePanel() {
   if (!playlistCreatePanel) return;
   playlistCreatePanel.classList.remove("hidden");
@@ -357,10 +387,19 @@ playlistAddCancel?.addEventListener("click", closeAddPanel);
 
 playlistAddConfirm?.addEventListener("click", () => {
   if (!activePlaylistId || !playlistAddList) return;
+  const playlist = loadPlaylists().find(item => item.id === activePlaylistId);
+  if (!playlist) return;
   const selected = Array.from(playlistAddList.querySelectorAll("input[type='checkbox']"))
     .filter(input => input.checked)
-    .map(input => input.value);
-  selected.forEach(songId => addSongToPlaylist(activePlaylistId, String(songId)));
+    .map(input => String(input.value));
+  const selectedSet = new Set(selected);
+  const existingIds = playlist.songIds.map(id => String(id));
+  existingIds.forEach(songId => {
+    if (!selectedSet.has(songId)) {
+      removeSongFromPlaylist(activePlaylistId, songId);
+    }
+  });
+  selected.forEach(songId => addSongToPlaylist(activePlaylistId, songId));
   closeAddPanel();
   renderPlaylistsHome();
   renderPlaylistView();
@@ -368,11 +407,16 @@ playlistAddConfirm?.addEventListener("click", () => {
 
 playlistDeleteBtn?.addEventListener("click", () => {
   if (!activePlaylistId) return;
-  const playlist = loadPlaylists().find(item => item.id === activePlaylistId);
-  const name = playlist?.name || "this playlist";
-  const confirmed = window.confirm(`Delete "${name}"? This can't be undone.`);
-  if (!confirmed) return;
+  openDeletePanel();
+});
+
+playlistDeleteCancel?.addEventListener("click", closeDeletePanel);
+playlistDeleteClose?.addEventListener("click", closeDeletePanel);
+playlistDeleteBackdrop?.addEventListener("click", closeDeletePanel);
+playlistDeleteConfirm?.addEventListener("click", () => {
+  if (!activePlaylistId) return;
   deletePlaylist(activePlaylistId);
+  closeDeletePanel();
   closePlaylistView();
   renderPlaylistsHome();
 });
@@ -422,6 +466,10 @@ document.addEventListener("click", () => {
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
+    if (playlistDeletePanel && !playlistDeletePanel.classList.contains("hidden")) {
+      closeDeletePanel();
+      return;
+    }
     if (playlistCreatePanel && !playlistCreatePanel.classList.contains("hidden")) {
       closeCreatePanel();
       return;
