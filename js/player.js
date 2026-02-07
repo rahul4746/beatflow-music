@@ -427,7 +427,10 @@ window.addEventListener("resize", updatePlayerBarHeight);
   }
 
 
-  document.addEventListener("click", () => {
+  document.addEventListener("click", event => {
+    if (event.target.closest(".menu-btn") || event.target.closest(".song-menu")) {
+      return;
+    }
     document.querySelectorAll(".song-menu").forEach(m => {
       m.classList.remove("menu-open");
     });
