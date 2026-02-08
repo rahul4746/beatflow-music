@@ -1,4 +1,4 @@
-const RESUME_KEY = "sastafy-resume";
+const RESUME_KEY = "beatflow-resume";
 
 /* Save current song + time */
 function saveResumeState(index, time) {
