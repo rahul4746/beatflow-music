@@ -1,4 +1,4 @@
-const PLAYLISTS_KEY = "sastafy_playlists";
+const PLAYLISTS_KEY = "beatflow_playlists";
 
 function loadPlaylists() {
   const raw = localStorage.getItem(PLAYLISTS_KEY);
