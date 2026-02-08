@@ -1,27 +1,27 @@
 /* ===============================
-   Sastafy Music Player
+   BeatFlow Music Player
    Service Worker
    =============================== */
 
-const CACHE_NAME = "sastafy-v2.9"; // ⬅️ bump version to force update
+const CACHE_NAME = "beatflow-v1.7"; // ⬅️ bump version to force update
 
 const FILES_TO_CACHE = [
-  "/",                       // root
-  "/index.html",
-  "/manifest.json",
+  "./",                       // root
+  "./index.html",
+  "./manifest.json",
 
   // JS
-  "/js/player.js",
-  "/js/storage.js",
+  "./js/player.js",
+  "./js/storage.js",
 
   // CSS
-  "/style.css",
+  "./style.css",
 
   // Images (IMPORTANT)
-  "/assets/images/default.png",
+  "./assets/images/default.png",
 
   // Icons (PWA)
-  "/icons/app.png"
+  ".icons/app.png"
 ];
 
 /* ---------- INSTALL ---------- */
@@ -83,40 +83,3 @@ self.addEventListener("fetch", event => {
     })
   );
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
