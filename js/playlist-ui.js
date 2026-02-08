@@ -47,6 +47,7 @@ let pendingPlaylistAdd = null;
 let pendingKnownIds = new Set();
 let lastPlaylistFocus = null;
 let lastAddPanelFocus = null;
+let playlistHistoryActive = false;
 
 if (playlistView?.classList.contains("hidden")) {
   playlistView.setAttribute("inert", "");
@@ -124,9 +125,13 @@ function openPlaylistView(playlistId) {
     playlistView.removeAttribute("inert");
     playlistBackBtn?.focus();
   }
+  if (!playlistHistoryActive) {
+    history.pushState({ playlistView: true }, "", window.location.href);
+    playlistHistoryActive = true;
+  }
 }
 
-function closePlaylistView() {
+function closePlaylistView({ useHistory = true } = {}) {
   activePlaylistId = null;
   if (playlistView) {
     playlistView.classList.add("hidden");
@@ -137,6 +142,10 @@ function closePlaylistView() {
     lastPlaylistFocus.focus();
   } else {
     createPlaylistBtn?.focus();
+  }
+  if (useHistory && playlistHistoryActive) {
+    playlistHistoryActive = false;
+    history.back();
   }
 }
 
@@ -490,12 +499,20 @@ document.addEventListener("keydown", event => {
       closeAddPanel();
       return;
     }
-    if (playlistView && !playlistView.classList.contains("hidden")) {
+     if (playlistView && !playlistView.classList.contains("hidden")) {
       closePlaylistView();
     }
   }
 });
 
+window.addEventListener("popstate", () => {
+  if (playlistHistoryActive && playlistView && !playlistView.classList.contains("hidden")) {
+    playlistHistoryActive = false;
+    closePlaylistView({ useHistory: false });
+  } else {
+    playlistHistoryActive = false;
+  }
+});
 document.addEventListener("playlists-updated", () => {
   renderPlaylistsHome();
   renderPlaylistView();
