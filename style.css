@@ -1113,6 +1113,27 @@ button {
   opacity: 0.6;
 }
 
+.back-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--player-bar-height, 72px) + 18px);
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 130;
+}
+
+.back-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ===== NOW PLAYING MODAL ===== */
 .now-playing-modal {
   position: fixed;
