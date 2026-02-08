@@ -34,7 +34,7 @@ export function updateMediaInfo(song) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title: song.title || "",
     artist: song.artist || "",
-    album: "Sastafy Music Player",
+    album: "BeatFlow Music Player",
     artwork: [
       {
         src: song.cover || "assets/images/default.png",
