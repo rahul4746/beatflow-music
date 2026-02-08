@@ -1,6 +1,6 @@
 {
-  "name": "Sastafy Music Player",
-  "short_name": "Sastafy",
+  "name": "BeatFlow Music Player",
+  "short_name": "BeatFlow",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0f172a",
