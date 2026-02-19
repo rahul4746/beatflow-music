@@ -3,7 +3,7 @@
    Service Worker
    =============================== */
 
-const CACHE_NAME = "beatflow-v2.1"; // ⬅️ bump version to force update
+const CACHE_NAME = "beatflow-v2.2"; // ⬅️ bump version to force update
 
 const FILES_TO_CACHE = [
   "./",                       // root
@@ -94,3 +94,4 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
