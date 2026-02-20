@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   miniNowPlaying?.addEventListener("click", event => {
-    if (event.target.closest("#queueBtn")) return;
+    if (event.target.closest("#queueBtn") || event.target.closest("#miniLike")) return;
     openModal();
   });
 

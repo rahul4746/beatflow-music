@@ -829,6 +829,13 @@ body {
   border-radius: 10px;
 }
 
+.mini-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
 .mini-now-playing:hover {
   background: rgba(255, 255, 255, 0.06);
 }
@@ -860,6 +867,10 @@ body {
 }
 .queue-btn--active {
   color: #22c55e;
+}
+
+.queue-btn.active {
+  color: #1db954;
 }
 
 .queue-btn--active:hover {
@@ -1396,4 +1407,3 @@ button {
   background: rgba(29, 185, 84, 0.1);
   border: 2px dashed #1db954;
 }
-

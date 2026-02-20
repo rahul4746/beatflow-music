@@ -205,14 +205,15 @@ function renderPlaylistView() {
           <p>${song?.artist || "Song not found"}</p>
         </div>
         <div class="playlist-song-actions">
-          <button class="playlist-like-btn" aria-label="Unlike">
-            <i class="${isLiked(songId) ? "fa-solid fa-heart" : "fa-regular fa-heart"}"></i>
-          </button>
           <button class="playlist-menu-btn" aria-label="Playlist options">
             <i class="fa-solid fa-ellipsis-vertical"></i>
           </button>
         </div>
         <div class="playlist-menu">
+          <button class="playlist-toggle-like">
+            <i class="fa-solid fa-heart"></i>
+            ${isLiked(songId) ? "Unlike song" : "Like song"}
+          </button>
           <button class="playlist-play-next">
             <i class="fa-solid fa-forward-step"></i>
             Play next
@@ -235,19 +236,11 @@ function renderPlaylistView() {
           window.loadSong(idx, true, "manual");
         }
       });
-      const likeBtn = row.querySelector(".playlist-like-btn");
-      likeBtn.addEventListener("click", e => {
+      const toggleLike = row.querySelector(".playlist-toggle-like");
+      toggleLike.addEventListener("click", e => {
         e.stopPropagation();
         const liked = isLiked(songId);
-        if (liked) {
-          removeLike(songId);
-        } else {
-          addLike(songId);
-        }
-        const icon = likeBtn.querySelector("i");
-        if (icon) {
-          icon.className = !liked ? "fa-solid fa-heart" : "fa-regular fa-heart";
-        }
+        liked ? removeLike(songId) : addLike(songId);
         renderPlaylistsHome();
         renderPlaylistView();
       });
@@ -337,9 +330,6 @@ function renderPlaylistView() {
         <p>${song?.artist || "Song not found"}</p>
       </div>
       <div class="playlist-song-actions">
-        <button class="playlist-like-btn" aria-label="Like">
-          <i class="${isLiked(songId) ? "fa-solid fa-heart" : "fa-regular fa-heart"}"></i>
-        </button>
         <button class="playlist-add-btn" aria-label="Add to playlists">
           <i class="fa-regular fa-square-plus"></i>
         </button>
@@ -348,6 +338,10 @@ function renderPlaylistView() {
         </button>
       </div>
       <div class="playlist-menu">
+        <button class="playlist-toggle-like">
+          <i class="fa-solid fa-heart"></i>
+          ${isLiked(songId) ? "Unlike song" : "Like song"}
+        </button>
         <button class="playlist-play-next">
           <i class="fa-solid fa-forward-step"></i>
           Play next
@@ -373,20 +367,13 @@ function renderPlaylistView() {
     });
 
     const addBtn = row.querySelector(".playlist-add-btn");
-    const likeBtn = row.querySelector(".playlist-like-btn");
-    likeBtn.addEventListener("click", event => {
+    const toggleLike = row.querySelector(".playlist-toggle-like");
+    toggleLike.addEventListener("click", event => {
       event.stopPropagation();
       const liked = isLiked(songId);
-      if (liked) {
-        removeLike(songId);
-      } else {
-        addLike(songId);
-      }
-      const icon = likeBtn.querySelector("i");
-      if (icon) {
-        icon.className = !liked ? "fa-solid fa-heart" : "fa-regular fa-heart";
-      }
+      liked ? removeLike(songId) : addLike(songId);
       renderPlaylistsHome();
+      renderPlaylistView();
     });
     const menuBtn = row.querySelector(".playlist-menu-btn");
     const menu = row.querySelector(".playlist-menu");

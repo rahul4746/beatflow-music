@@ -256,12 +256,14 @@
       <div class="mini-info">
         <span id="miniTitle">No song playing</span>
       </div>
-
-
-      <!-- FIX: removed disabled so JS click works -->
-      <button id="queueBtn" class="queue-btn">
-        <i class="fa-solid fa-list"></i>
-      </button>
+      <div class="mini-actions">
+        <button id="miniLike" class="queue-btn" aria-label="Like song">
+          <i class="fa-solid fa-heart"></i>
+        </button>
+        <button id="queueBtn" class="queue-btn" aria-label="Open queue">
+          <i class="fa-solid fa-list"></i>
+        </button>
+      </div>
     </div>
 
     <input
