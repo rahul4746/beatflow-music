@@ -2,12 +2,8 @@
    BeatFlow Music Player
    Service Worker
    =============================== */
-
-<<<<<<< HEAD
+   
 const CACHE_NAME = "beatflow-v2.8"; // ⬅️ bump version to force update
-=======
-const CACHE_NAME = "beatflow-v2.6"; // ⬅️ bump version to force update
->>>>>>> 89639a5190c2b8f5507e85895985b9ebd2102eca
 
 const FILES_TO_CACHE = [
   "./",                       // root
