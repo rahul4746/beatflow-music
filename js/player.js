@@ -101,14 +101,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const playlistEl = document.querySelector(".playlist");
   const emptyState = document.getElementById("emptyState");
   const playerBar = document.querySelector(".player-bar");
-  const songRenamePanel = document.getElementById("songRenamePanel");
-  const songRenameName = document.getElementById("songRenameName");
-  const songRenameClose = document.getElementById("songRenameClose");
-  const songRenameCancel = document.getElementById("songRenameCancel");
-  const songRenameConfirm = document.getElementById("songRenameConfirm");
+  let songRenamePanel = document.getElementById("songRenamePanel");
+  let songRenameName = document.getElementById("songRenameName");
+  let songRenameClose = document.getElementById("songRenameClose");
+  let songRenameCancel = document.getElementById("songRenameCancel");
+  let songRenameConfirm = document.getElementById("songRenameConfirm");
 
   let pendingRenameSong = null;
   let lastRenameFocus = null;
+
+  let renamePanelEventsBound = false;
 
   /* ================= XSS ESCAPE ================= */
   function escapeHtml(str) {
@@ -1086,7 +1088,7 @@ window.addEventListener("resize", updatePlayerBarHeight);
   window.songs = songs;
   window.renameSong = songId => {
     const song = songs.find(item => String(item.dbId) === String(songId));
-    if (song) renameSong(song);
+    if (song) openRenamePanel(song);
   };
   window.loadSong = loadSong;
   window.getCurrentSongId = () => songs[currentIndex]?.dbId;
