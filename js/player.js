@@ -174,9 +174,59 @@ updatePlayerBarHeight();
 window.addEventListener("resize", updatePlayerBarHeight);
 
 
+ function ensureRenamePanel() {
+    if (!songRenamePanel) {
+      songRenamePanel = document.createElement("div");
+      songRenamePanel.id = "songRenamePanel";
+      songRenamePanel.className = "playlist-add-panel hidden";
+      songRenamePanel.setAttribute("aria-hidden", "true");
+      songRenamePanel.setAttribute("inert", "");
+      songRenamePanel.innerHTML = `
+        <div class="playlist-add-content playlist-create-content" role="dialog" aria-modal="true" aria-labelledby="songRenameTitle">
+          <div class="playlist-add-header">
+            <h3 id="songRenameTitle">Rename song</h3>
+            <button id="songRenameClose" class="icon-btn" type="button" aria-label="Close rename song"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="playlist-create-body">
+            <label class="playlist-create-label" for="songRenameName">Song name</label>
+            <div class="playlist-create-field">
+              <i class="fa-solid fa-music"></i>
+              <input id="songRenameName" type="text" placeholder="Song name" maxlength="120" />
+            </div>
+          </div>
+          <div class="playlist-add-actions">
+            <button id="songRenameCancel" class="ghost-btn" type="button"><i class="fa-solid fa-xmark"></i> Cancel</button>
+            <button id="songRenameConfirm" class="primary-btn" type="button"><i class="fa-solid fa-check"></i> Rename</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(songRenamePanel);
+    }
 
-function openRenamePanel(song) {
-    if (!songRenamePanel || !songRenameName) return;
+    songRenameName = songRenamePanel.querySelector("#songRenameName");
+    songRenameClose = songRenamePanel.querySelector("#songRenameClose");
+    songRenameCancel = songRenamePanel.querySelector("#songRenameCancel");
+    songRenameConfirm = songRenamePanel.querySelector("#songRenameConfirm");
+
+    if (!songRenameName || !songRenameClose || !songRenameCancel || !songRenameConfirm) return false;
+    if (renamePanelEventsBound) return true;
+
+    songRenameClose.addEventListener("click", closeRenamePanel);
+    songRenameCancel.addEventListener("click", closeRenamePanel);
+    songRenameConfirm.addEventListener("click", saveRenamedSong);
+    songRenameName.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        saveRenamedSong();
+      }
+    });
+    renamePanelEventsBound = true;
+    return true;
+  }
+
+
+  function openRenamePanel(song) {
+    if (!ensureRenamePanel()) return;
 
     pendingRenameSong = song;
     lastRenameFocus = document.activeElement;
@@ -730,7 +780,7 @@ function openRenamePanel(song) {
         e.stopPropagation();
         menu?.classList.remove("menu-open");
         div.classList.remove("menu-active");
-        renameSong(song);
+        openRenamePanel(song);
       });
 
 
