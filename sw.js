@@ -4,7 +4,7 @@
    =============================== */
    
 
-const CACHE_NAME = "beatflow-v3.3"; // ⬅️ bump version to force update
+const CACHE_NAME = "beatflow-v3.4"; // ⬅️ bump version to force update
 
 const FILES_TO_CACHE = [
   "./",                       // root
@@ -67,6 +67,29 @@ self.addEventListener("activate", event => {
 /* ---------- FETCH ---------- */
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+
+  const isAppShellRequest =
+    event.request.url.startsWith(self.location.origin) &&
+    (event.request.mode === "navigate" ||
+      event.request.destination === "script" ||
+      event.request.destination === "style");
+
+  if (isAppShellRequest) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(cached => cached || Response.error()))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(cached => {
